@@ -1,0 +1,54 @@
+{
+  "name": "@omedia/teltonika-node",
+  "version": "1.1.5",
+  "private": true,
+  "description": "Teltonika input node",
+  "main": "dist/app/index.js",
+  "scripts": {
+    "clean": "rm -rf dist",
+    "prebuild": "npm run clean",
+    "build": "tsc -p tsconfig.json",
+    "test": "jest",
+    "docker": "node dist/app/docker.js"
+  },
+  "author": "Alexander Sergeychik <alexander@sergeychik.com>",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/debug": "0.0.30",
+    "@types/jest": "^23.3.5",
+    "@types/node": "^10.12.0",
+    "jest": "^23.6.0",
+    "ts-jest": "^22.4.6",
+    "tslint": "^5.11.0",
+    "typescript": "^2.9.2"
+  },
+  "dependencies": {
+    "@omedia/teltonika-fmxxxx": "^1.2.17",
+    "@types/uuid": "^3.4.4",
+    "aws-sdk": "^2.339.0",
+    "debug": "^3.2.6"
+  },
+  "jest": {
+    "clearMocks": true,
+    "globals": {
+      "ts-jest": {
+        "tsConfigFile": "tsconfig.json"
+      }
+    },
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js"
+    ],
+    "roots": [
+      "<rootDir>/test"
+    ],
+    "testEnvironment": "node",
+    "testMatch": [
+      "**/*.test.(ts|tsx|js)"
+    ],
+    "transform": {
+      "^.+\\.(ts|tsx)$": "ts-jest"
+    }
+  }
+}
