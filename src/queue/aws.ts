@@ -1,7 +1,9 @@
 import * as aws from 'aws-sdk';
 import * as debug from 'debug';
-import {Queue, QueueMessage} from './queue';
-export class AWSQueue implements Queue {
+import {Generic} from '../api/v1';
+import {Queue} from './queue';
+
+export class AWSQueue implements Queue<Generic> {
 
 	protected readonly logger: debug.IDebugger;
 	protected readonly sqs: AWS.SQS;
@@ -18,16 +20,16 @@ export class AWSQueue implements Queue {
 		this.logger = debug('queue:aws');
 	}
 
-	public async enqueue(message: QueueMessage) {
+	public async enqueue(message: Generic) {
 		const request: aws.SQS.SendMessageRequest = {
 			MessageAttributes: {
 				id: {
 					DataType: 'String',
-					StringValue: message.id,
+					StringValue: JSON.stringify(message.id),
 				},
 				provider: {
 					DataType: 'String',
-					StringValue: message.provider,
+					StringValue: message.id.provider,
 				},
 				type: {
 					DataType: 'String',

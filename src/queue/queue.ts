@@ -1,20 +1,16 @@
-import {FailureCodesMessage, IoMessage, LocationMessage, ObdMessage} from '../types';
-
-export type QueueMessage = LocationMessage | IoMessage | ObdMessage | FailureCodesMessage;
-
-export interface Queue {
-	enqueue: (message: QueueMessage) => Promise<void>;
+export interface Queue<T> {
+	enqueue: (message: T) => Promise<void>;
 }
 
-export class MultiQueue implements Queue {
+export class MultiQueue<T> implements Queue<T> {
 
-	protected readonly queues: Queue[] = [];
+	protected readonly queues: Array<Queue<T>> = [];
 
-	public attach(queue: Queue) {
+	public attach(queue: Queue<T>) {
 		this.queues.push(queue);
 	}
 
-	public async enqueue(message: QueueMessage) {
+	public async enqueue(message: T) {
 		return Promise.all(this.queues.map((queue) => queue.enqueue(message))).then(() => {
 			return;
 		});

@@ -15,7 +15,7 @@
   "license": "ISC",
   "devDependencies": {
     "@types/debug": "0.0.30",
-    "@types/jest": "^23.3.5",
+    "@types/jest": "^23.3.7",
     "@types/node": "^10.12.0",
     "jest": "^23.6.0",
     "ts-jest": "^22.4.6",
@@ -23,9 +23,8 @@
     "typescript": "^2.9.2"
   },
   "dependencies": {
-    "@omedia/teltonika-fmxxxx": "^1.2.17",
-    "@types/uuid": "^3.4.4",
-    "aws-sdk": "^2.339.0",
+    "@omedia/teltonika-fmxxxx": "~2",
+    "aws-sdk": "^2.342.0",
     "debug": "^3.2.6"
   },
   "jest": {

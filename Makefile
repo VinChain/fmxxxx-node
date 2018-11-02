@@ -1,5 +1,5 @@
 ## Compile module
-  DOCKER_IMAGE=teltonika-node
+DOCKER_IMAGE=teltonika-node
 DOCKER_TAG=develop
 
 
@@ -27,13 +27,12 @@ build: clean
 test: build
 	npm test
 
-
 image: build
 	# make docker image and tag it
 	docker build --target production -t $(DOCKER_IMAGE):$(DOCKER_TAG) .
 	docker tag $(DOCKER_IMAGE):$(DOCKER_TAG) $(DOCKER_DOCKERHUB_IMAGE):$(DOCKER_DOCKERHUB_TAG)
 	docker tag $(DOCKER_IMAGE):$(DOCKER_TAG) $(DOCKER_AMAZON_IMAGE):$(DOCKER_AMAZON_TAG)
 
-publish:
+publish: image
 	#docker push $(DOCKER_DOCKERHUB_IMAGE):$(DOCKER_DOCKERHUB_TAG)
 	docker push $(DOCKER_AMAZON_IMAGE):$(DOCKER_AMAZON_TAG)
