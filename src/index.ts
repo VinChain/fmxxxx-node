@@ -4,4 +4,4 @@ export {createHealthServer} from './health';
 
 export {online};
 
-export {FmxxxxServer} from './fmxxxx';
+export {createServer as createFmxxxxServer } from './fmxxxx/server';

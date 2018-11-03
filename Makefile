@@ -1,7 +1,6 @@
 ## Compile module
 DOCKER_IMAGE=teltonika-node
-DOCKER_TAG=develop
-
+DOCKER_TAG=stable
 
 DOCKER_DOCKERHUB_IMAGE=vingps/teltonika-node
 DOCKER_DOCKERHUB_TAG=$(DOCKER_TAG)

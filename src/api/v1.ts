@@ -51,7 +51,7 @@ export interface Telemetry extends Generic {
 
 export interface Vin extends Generic {
 	type: 'vin';
-	data: string;
+	data: string | false;
 }
 
 export interface FaultCodes extends Generic {

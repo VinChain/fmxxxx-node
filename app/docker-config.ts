@@ -3,6 +3,8 @@ export interface DockerConfig {
 	heartbeatPeriod: number;
 	handshakeTimeout?: number;
 
+	filter?: string[];
+
 	aws?: {
 		accessKeyId: string;
 		accessSecretKey: string;
@@ -25,6 +27,13 @@ export function createFromEnv(): DockerConfig {
 			queueUrl: process.env.AWS_SQS_QUEUE_NAME,
 			region: process.env.AWS_REGION,
 		};
+	}
+
+	if (process.env.MESSAGE_FILTER) {
+		const filter = process.env.MESSAGE_FILTER.split(',').map((i) => i.trim());
+		if (filter.length) {
+			config.filter = filter;
+		}
 	}
 
 	return config;

@@ -1,14 +1,13 @@
-import * as fmxxxx from '@omedia/teltonika-fmxxxx';
+import { Record } from '@omedia/teltonika-fmxxxx';
 import * as debug from 'debug';
-import * as v1 from '../../v1';
-import {CodecMapper} from './mapper';
+import * as v1 from '../../api/v1';
+import {CodecMapper} from '../mapper';
 
-export type Record = fmxxxx.codec8.Record;
 export type OutputType = v1.Location | v1.Telemetry;
 
 const logger = debug('fmxxxx:mapper:codec8');
 
-export const codec8: CodecMapper<Record, OutputType> = (imei: string, record: Record): OutputType[] => {
+export const map: CodecMapper<Record, OutputType> = (imei: string, record: Record): OutputType[] => {
 	const messages = [];
 	messages.push(...generateLocations(imei, record));
 	messages.push(...generateTelemetry(imei, record));
@@ -26,7 +25,7 @@ const generateLocations: CodecMapper<Record, v1.Location> = (imei, data) => {
 				course: data.gps.angle,
 				latitude: data.gps.latitude,
 				longitude: data.gps.longitude,
-				satellites: data.gps.sattelites,
+				satellites: data.gps.satellites,
 				speed: data.gps.speed,
 			},
 			id: {
@@ -61,7 +60,6 @@ const generateTelemetry: CodecMapper<Record, v1.Telemetry | v1.FmxxxxIo> = (imei
 		};
 		messages.push(io);
 	}
-
 
 	// Compiles telemetry data
 	if (data.io) {
@@ -127,3 +125,4 @@ const generateTelemetry: CodecMapper<Record, v1.Telemetry | v1.FmxxxxIo> = (imei
 	return messages;
 };
 
+export default map;
