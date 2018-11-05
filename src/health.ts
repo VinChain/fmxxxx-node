@@ -10,6 +10,11 @@ export const createHealthServer = (): net.Server => {
 		socket.write('Hello!', 'hex');
 	});
 
+	server.on('listening', () => {
+		const addr: net.AddressInfo = server.address() as net.AddressInfo;
+		logger('listening at %s:%d', addr.address, addr.port);
+	});
+
 	return server;
 };
 

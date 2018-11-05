@@ -1,9 +1,10 @@
 import * as debug from 'debug';
 import * as app from '../src';
-import {createFromEnv} from './docker-config';
-import {MultiQueue} from '../src/queue/queue';
 import {Generic} from '../src/api/v1';
 import {AWSQueue} from '../src/queue/aws';
+import {MultiQueue} from '../src/queue/queue';
+import {createFromEnv} from './docker-config';
+import * as util from 'util';
 
 const logger = debug('app');
 const config = createFromEnv();
@@ -28,17 +29,30 @@ fmxxxx.listen(16500);
 
 // run heartbeat notifier
 const heartbeatLogger = debug(logger.namespace + ':heartbeat');
-let heartbeatMessagesCounter = 0;
+let heartbeatMessagesCounter: { [type: string]: number } = {};
 heartbeatLogger('Heartbeat set up for %d seconds', config.heartbeatPeriod);
 setInterval(() => {
+
+	const total = Object.getOwnPropertyNames(heartbeatMessagesCounter).reduce((acc, prop) => {
+		acc += heartbeatMessagesCounter[prop];
+		return acc;
+	}, 0);
+
+	const description = Object.getOwnPropertyNames(heartbeatMessagesCounter).reduce((acc, prop) => {
+		acc.push(util.format('%s: %d', prop, heartbeatMessagesCounter[prop]));
+		return acc;
+	}, []).join(', ');
+
 	heartbeatLogger(
-		'%s, online: %d devices (curr: %d), %d messages',
+		'%s, online: %d devices (%d last %d sec), %d messages%s',
 		(new Date()).toISOString(),
-		onliner.length,
 		fmxxxx.connections,
-		heartbeatMessagesCounter,
+		onliner.length,
+		60,
+		total,
+		description ? ' [' + description + ']' : '',
 	);
-	heartbeatMessagesCounter = 0;
+	heartbeatMessagesCounter = {};
 }, Math.floor(config.heartbeatPeriod * 1000));
 
 
@@ -66,7 +80,13 @@ fmxxxx.on('connection', (device) => {
 
 // Bind onliner & message counter
 fmxxxx.on('data', (msg, device) => onliner.update(device.imei));
-fmxxxx.on('data', () => heartbeatMessagesCounter++);
+fmxxxx.on('data', (msg) => {
+	if (heartbeatMessagesCounter[msg.type]) {
+		heartbeatMessagesCounter[msg.type]++;
+	} else {
+		heartbeatMessagesCounter[msg.type] = 1;
+	}
+});
 
 // Bind to message enqueuer
 fmxxxx.on('data', (msg: Generic) => {
