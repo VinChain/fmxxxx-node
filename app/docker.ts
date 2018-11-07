@@ -97,7 +97,7 @@ if (config.filter) {
 }
 fmxxxx.on('data', (msg: Generic) => {
 	if (config.filter && (config.filter.indexOf(msg.type) < 0)) {
-		logger('Message %s filtered', msg.type);
+		// logger('Message %s filtered', msg.type);
 		return;
 	}
 	populationQueue.enqueue(msg);
