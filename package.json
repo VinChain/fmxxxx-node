@@ -1,6 +1,6 @@
 {
   "name": "@omedia/teltonika-node",
-  "version": "2.1.21",
+  "version": "2.1.23",
   "private": true,
   "description": "Teltonika input node",
   "main": "dist/app/index.js",

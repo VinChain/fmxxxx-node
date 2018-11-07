@@ -6,8 +6,13 @@ import {Queue} from './queue';
 export class AWSQueue implements Queue<Generic> {
 
 	protected readonly logger: debug.IDebugger;
-	protected readonly sqs: AWS.SQS;
+	protected readonly sqs: aws.SQS;
 	protected readonly queueUrl: string;
+
+	protected readonly queue: aws.SQS.SendMessageBatchRequestEntry[] = [];
+	protected queueId: number = 1;
+	protected flushTimeout;
+
 
 	constructor(key: string, secret: string, region: string, queueUrl: string) {
 		const credentials = new aws.Credentials(key, secret);
@@ -20,10 +25,14 @@ export class AWSQueue implements Queue<Generic> {
 		this.queueUrl = queueUrl;
 		this.logger = debug('queue:aws');
 		this.logger('Sending to: %s', queueUrl);
+
+		this.flush();
 	}
 
 	public async enqueue(message: Generic) {
-		const request: aws.SQS.SendMessageRequest = {
+
+		const msg: aws.SQS.SendMessageBatchRequestEntry = {
+			Id: 'msg_' + this.queueId++,
 			MessageAttributes: {
 				id: {
 					DataType: 'String',
@@ -39,12 +48,48 @@ export class AWSQueue implements Queue<Generic> {
 				},
 			},
 			MessageBody: JSON.stringify(message),
-			QueueUrl: this.queueUrl,
 		};
-		const promise = this.sqs.sendMessage(request).promise();
-		promise.then((data) => {
-			this.logger('Message sent, ID=%s', data.MessageId);
-		});
+
+		this.queue.push(msg);
+
+		// handle flushing event on messages overflow
+		if (this.queue.length >= 50) {
+			this.flush();
+		}
+	}
+
+	/**
+	 * Flushes queue messages
+	 */
+	public async flush() {
+		if (this.flushTimeout) {
+			clearTimeout(this.flushTimeout);
+		}
+
+		while (this.queue.length) {
+
+			// take batch of 10 entries
+			let counter = 0;
+			const entries: aws.SQS.Types.SendMessageBatchRequestEntryList = [];
+			while (this.queue.length && counter < 10) {
+				entries.push(this.queue.shift());
+				counter++;
+			}
+			if (entries.length) {
+				const request: aws.SQS.Types.SendMessageBatchRequest = {
+					Entries: entries,
+					QueueUrl: this.queueUrl,
+				};
+				const promise = this.sqs.sendMessageBatch(request).promise();
+				promise.then((data) => {
+					this.logger('%d messages sent', entries.length);
+					return data;
+				});
+			}
+		}
+
+		// reset flush timeout
+		this.flushTimeout = setTimeout(() => this.flush(), 5 * 1000);
 	}
 
 }
