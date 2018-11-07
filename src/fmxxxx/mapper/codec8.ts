@@ -1,4 +1,4 @@
-import { Record } from '@omedia/teltonika-fmxxxx';
+import {Record} from '@omedia/teltonika-fmxxxx';
 import * as debug from 'debug';
 import * as v1 from '../../api/v1';
 import {CodecMapper} from '../mapper';
@@ -76,45 +76,45 @@ const generateTelemetry: CodecMapper<Record, v1.Telemetry | v1.FmxxxxIo> = (imei
 
 		// preset accel
 		if (data.io.data['17'] && data.io.data['18'] && data.io.data['19']) {
-			telemetry.data.accelerometer = { x: 0, y: 0, z: 0 };
+			telemetry.data.accelerometer = {x: 0, y: 0, z: 0};
 		}
 
 		// common
 		for (const ioId of Object.getOwnPropertyNames(data.io.data)) {
-			const value = data.io.data[ioId];
+			const buffer: Buffer = data.io.data[ioId];
 			switch (parseInt(ioId, 10)) {
 				case 239:
-					telemetry.data.ignition = !!value;
+					telemetry.data.ignition = !!buffer.readUInt8(0);
 					break;
 				case 240:
-					telemetry.data.movement = !!value;
+					telemetry.data.movement = !!buffer.readUInt8(0);
 					break;
 				case 24:
-					telemetry.data.speed = value;
+					telemetry.data.speed = buffer.readUInt16BE(0);
 					break;
 				case 36:
-					telemetry.data.engine_rpm = value;
+					telemetry.data.engine_rpm = buffer.readUInt16BE(0);
 					break;
 				case 13:
-					telemetry.data.average_fuel_use = value;
+					telemetry.data.average_fuel_use = buffer.readUInt16BE(0);
 					break;
 				case 48:
-					telemetry.data.fuel_level = value;
+					telemetry.data.fuel_level = buffer.readUInt8(0);
 					break;
 				case 16:
-					telemetry.data.total_odometer = value / 1000; // km
+					telemetry.data.total_odometer = buffer.readUInt32BE(0) / 1000; // km
 					break;
 				case 199:
-					telemetry.data.trip_odometer = value / 1000; // km
+					telemetry.data.trip_odometer = buffer.readUInt32BE(0) / 1000; // km
 					break;
 				case 17:
-					telemetry.data.accelerometer.x = value / 1000; // mG => G
+					telemetry.data.accelerometer.x = buffer.readInt16BE(0) / 1000; // mG => G
 					break;
 				case 18:
-					telemetry.data.accelerometer.y = value / 1000; // mG => G
+					telemetry.data.accelerometer.y = buffer.readInt16BE(0) / 1000; // mG => G
 					break;
 				case 19:
-					telemetry.data.accelerometer.z = value / 1000; // mG => G
+					telemetry.data.accelerometer.z = buffer.readInt16BE(0) / 1000; // mG => G
 					break;
 			}
 		}

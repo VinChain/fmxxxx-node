@@ -23,7 +23,7 @@
     "typescript": "^2.9.2"
   },
   "dependencies": {
-    "@omedia/teltonika-fmxxxx": "2.2.4",
+    "@omedia/teltonika-fmxxxx": "^2.3.2",
     "aws-sdk": "^2.342.0",
     "debug": "^3.2.6"
   },

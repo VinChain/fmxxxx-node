@@ -102,3 +102,9 @@ fmxxxx.on('data', (msg: Generic) => {
 	}
 	populationQueue.enqueue(msg);
 });
+//
+// fmxxxx.on('data', (msg: Generic) => {
+// 	if (msg.type === 'telemetry') {
+// 		logger(msg);
+// 	}
+// });

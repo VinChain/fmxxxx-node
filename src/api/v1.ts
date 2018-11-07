@@ -37,7 +37,7 @@ export interface Telemetry extends Generic {
 	data: {
 		ignition?: boolean;
 		movement?: boolean;
-		speed?: boolean;
+		speed?: number;
 		engine_rpm?: number;
 		total_odometer?: number;
 		trip_odometer?: number;
