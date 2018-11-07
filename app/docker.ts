@@ -1,10 +1,10 @@
 import * as debug from 'debug';
+import * as util from 'util';
 import * as app from '../src';
 import {Generic} from '../src/api/v1';
 import {AWSQueue} from '../src/queue/aws';
 import {MultiQueue} from '../src/queue/queue';
 import {createFromEnv} from './docker-config';
-import * as util from 'util';
 
 const logger = debug('app');
 const config = createFromEnv();

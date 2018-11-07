@@ -43,6 +43,7 @@ export const map: CodecMapper<string, OutputType> = (imei, command: string): Out
 		// ignore
 	}
 
+	logger('No commands parsed from %s', command);
 	return result;
 };
 

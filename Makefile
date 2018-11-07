@@ -1,3 +1,6 @@
+##
+VERSION=$(shell node -p "require('./package.json').version")
+
 ## Compile module
 DOCKER_IMAGE=teltonika-node
 DOCKER_TAG=stable
@@ -21,17 +24,27 @@ clean:
 
 build: clean
 	#npm run lint
+	#npm version --no-git-tag-version patch
 	npm run build
 
 test: build
 	npm test
 
 image: build
+
 	# make docker image and tag it
 	docker build --target production -t $(DOCKER_IMAGE):$(DOCKER_TAG) .
 	docker tag $(DOCKER_IMAGE):$(DOCKER_TAG) $(DOCKER_DOCKERHUB_IMAGE):$(DOCKER_DOCKERHUB_TAG)
+
 	docker tag $(DOCKER_IMAGE):$(DOCKER_TAG) $(DOCKER_AMAZON_IMAGE):$(DOCKER_AMAZON_TAG)
+	docker tag $(DOCKER_IMAGE):$(DOCKER_TAG) $(DOCKER_AMAZON_IMAGE):$(VERSION)
+
 
 publish: image
 	#docker push $(DOCKER_DOCKERHUB_IMAGE):$(DOCKER_DOCKERHUB_TAG)
+
+
+	aws ecr get-login --no-include-email | /bin/bash -C -
 	docker push $(DOCKER_AMAZON_IMAGE):$(DOCKER_AMAZON_TAG)
+	docker push $(DOCKER_AMAZON_IMAGE):$(VERSION)
+

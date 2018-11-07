@@ -7,9 +7,9 @@ export class AWSQueue implements Queue<Generic> {
 
 	protected readonly logger: debug.IDebugger;
 	protected readonly sqs: AWS.SQS;
-	protected readonly queueName: string;
+	protected readonly queueUrl: string;
 
-	constructor(key: string, secret: string, region: string, queue: string) {
+	constructor(key: string, secret: string, region: string, queueUrl: string) {
 		const credentials = new aws.Credentials(key, secret);
 		this.sqs = new aws.SQS({
 			apiVersion: '2012-11-05',
@@ -17,7 +17,9 @@ export class AWSQueue implements Queue<Generic> {
 			region,
 		});
 
+		this.queueUrl = queueUrl;
 		this.logger = debug('queue:aws');
+		this.logger('Sending to: %s', queueUrl);
 	}
 
 	public async enqueue(message: Generic) {
@@ -37,7 +39,7 @@ export class AWSQueue implements Queue<Generic> {
 				},
 			},
 			MessageBody: JSON.stringify(message),
-			QueueUrl: 'https://sqs.us-east-2.amazonaws.com/091879517775/vingps-sensor',
+			QueueUrl: this.queueUrl,
 		};
 		const promise = this.sqs.sendMessage(request).promise();
 		promise.then((data) => {

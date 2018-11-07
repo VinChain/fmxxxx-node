@@ -20,7 +20,7 @@ export function createFromEnv(): DockerConfig {
 		heartbeatPeriod: process.env.HEARTBEAT_PERIOD ? parseInt(process.env.HEARTBEAT_PERIOD, 10) : 60,
 	};
 
-	if (process.env.AWS_ACCESS_KEY_ID) {
+	if (process.env.AWS_ACCESS_KEY_ID && process.env.AWS_SQS_QUEUE_NAME) {
 		config.aws = {
 			accessKeyId: process.env.AWS_ACCESS_KEY_ID,
 			accessSecretKey: process.env.AWS_SECRET_KEY,
