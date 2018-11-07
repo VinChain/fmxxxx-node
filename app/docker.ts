@@ -5,6 +5,7 @@ import {Generic} from '../src/api/v1';
 import {AWSQueue} from '../src/queue/aws';
 import {MultiQueue} from '../src/queue/queue';
 import {createFromEnv} from './docker-config';
+import {log} from 'util';
 
 const logger = debug('app');
 const config = createFromEnv();
@@ -89,8 +90,14 @@ fmxxxx.on('data', (msg) => {
 });
 
 // Bind to message enqueuer
+if (config.filter) {
+	logger('Message filter configured to types: %s', config.filter.join(', '));
+} else {
+	logger('No message filter configured');
+}
 fmxxxx.on('data', (msg: Generic) => {
 	if (config.filter && (config.filter.indexOf(msg.type) < 0)) {
+		logger('Message %s filtered', msg.type);
 		return;
 	}
 	populationQueue.enqueue(msg);
