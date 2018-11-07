@@ -1,4 +1,5 @@
 import * as fmxxxx from '@omedia/teltonika-fmxxxx';
+import * as debug from 'debug';
 import {EventEmitter} from 'events';
 import {Generic} from '../api/v1';
 import codec12 from './mapper/codec12';
@@ -12,10 +13,13 @@ export interface ServerEvents {
 
 export class FmxxxxServer extends EventEmitter implements ServerEvents {
 
-	private fmxxxx: fmxxxx.Server;
+	private readonly fmxxxx: fmxxxx.Server;
+	private readonly logger: debug.IDebugger;
 
 	constructor(options?: fmxxxx.ServerOptions) {
 		super();
+
+		this.logger = debug('fmxxxx:mapper');
 		this.fmxxxx = fmxxxx.createServer('tcp', options);
 
 		// subscribe to data event
@@ -42,6 +46,7 @@ export class FmxxxxServer extends EventEmitter implements ServerEvents {
 				records.push(...codec12(device.imei, record));
 				break;
 		}
+		this.logger('%d messages generated from device %s', records.length, device.imei);
 		records.forEach((r) => this.emit('data', r, device));
 	}
 

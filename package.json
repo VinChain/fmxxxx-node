@@ -1,6 +1,6 @@
 {
   "name": "@omedia/teltonika-node",
-  "version": "2.1.8",
+  "version": "2.1.12",
   "private": true,
   "description": "Teltonika input node",
   "main": "dist/app/index.js",
@@ -23,7 +23,7 @@
     "typescript": "^2.9.2"
   },
   "dependencies": {
-    "@omedia/teltonika-fmxxxx": "^2.0.7",
+    "@omedia/teltonika-fmxxxx": "^2.2.0",
     "aws-sdk": "^2.342.0",
     "debug": "^3.2.6"
   },
