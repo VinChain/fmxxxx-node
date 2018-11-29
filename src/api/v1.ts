@@ -46,6 +46,7 @@ export interface Telemetry extends Generic {
 		accelerometer?: {
 			[name in 'x' | 'y' | 'z']: number;
 		};
+		battery_voltage?: number;
 	};
 }
 

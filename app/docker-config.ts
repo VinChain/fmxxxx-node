@@ -12,6 +12,11 @@ export interface DockerConfig {
 		region: string;
 	};
 
+	rabbitmq?: {
+		url: string;
+		queue: string;
+	};
+
 }
 
 export function createFromEnv(): DockerConfig {
@@ -26,6 +31,13 @@ export function createFromEnv(): DockerConfig {
 			accessSecretKey: process.env.AWS_SECRET_KEY,
 			queueUrl: process.env.AWS_SQS_QUEUE_NAME,
 			region: process.env.AWS_REGION,
+		};
+	}
+
+	if (process.env.RABBITMQ_URL && process.env.RABBITMQ_QUEUE) {
+		config.rabbitmq = {
+			queue: process.env.RABBITMQ_QUEUE,
+			url: process.env.RABBITMQ_URL,
 		};
 	}
 

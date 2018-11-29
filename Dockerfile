@@ -26,10 +26,16 @@ ENV     DEBUG               *
 ENV     DEBUG_HIDE_DATE     1
 ENV     HEARTBEAT_PERIOD    5
 ENV     HANDSHAKE_TIMEOUT   10
+
 #ENV     AWS_ACCESS_KEY_ID
 #ENV     AWS_SECRET_ACCESS_KEY
 #ENV     AWS_REGION us-east-2
-#ENV    MESSAGE_FILTER      vin,location,telemetry,faultcodes
+#ENV     AWS_SQS_QUEUE_NAME "myqueue"
+
+#ENV     RABBITMQ_URL        "server_url"
+#ENV     RABBITMQ_QUEUE      "queue_name"
+
+#ENV     MESSAGE_FILTER      vin,location,telemetry,faultcodes
 
 EXPOSE 16500
 EXPOSE 16501

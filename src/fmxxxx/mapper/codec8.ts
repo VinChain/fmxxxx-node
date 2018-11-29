@@ -116,6 +116,9 @@ const generateTelemetry: CodecMapper<Record, v1.Telemetry | v1.FmxxxxIo> = (imei
 				case 19:
 					telemetry.data.accelerometer.z = buffer.readInt16BE(0) / 1000; // mG => G
 					break;
+				case 67:
+					telemetry.data.battery_voltage = buffer.readInt16BE(0) * 1000; // mV => V
+					break;
 			}
 		}
 

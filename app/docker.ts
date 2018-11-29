@@ -6,6 +6,7 @@ import {AWSQueue} from '../src/queue/aws';
 import {MultiQueue} from '../src/queue/queue';
 import {createFromEnv} from './docker-config';
 import {log} from 'util';
+import {RabbitmqQueue} from '../src/queue/rabbitmq';
 
 const logger = debug('app');
 const config = createFromEnv();
@@ -69,6 +70,19 @@ if (config.aws) {
 	populationQueue.attach(awsQueue);
 	logger('AWS SQS queue attached');
 }
+if (config.rabbitmq) {
+	const rabbitmqQueue = new RabbitmqQueue(
+		config.rabbitmq.url,
+		config.rabbitmq.queue,
+	);
+	populationQueue.attach(rabbitmqQueue);
+	logger('RabbitMQ queue attached');
+	rabbitmqQueue.connect();
+	rabbitmqQueue.on('error', () => {
+		process.exit(100);
+	});
+}
+
 
 /* ----------------------- BINDINGS ---------------------- */
 
