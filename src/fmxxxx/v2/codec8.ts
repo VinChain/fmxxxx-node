@@ -1,11 +1,11 @@
 /**
  * Generates location API v2 event from codec8 GPS section
  */
+import * as api from '@vingps/message-schema';
 import * as fmxxxx from '@vingps/teltonika-fmxxxx';
-import * as api from '../api/v2';
 
-export function generate(record: fmxxxx.Record): api.Event[] {
-	const events: api.Event[] = [];
+export function generate(record: fmxxxx.Record): api.v2.Event[] {
+	const events: api.v2.Event[] = [];
 
 	// tslint:disable:object-literal-sort-keys
 	events.push({

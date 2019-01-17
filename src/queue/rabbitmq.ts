@@ -1,14 +1,14 @@
+import * as api from '@vingps/message-schema';
 import * as amqp from 'amqplib';
 import * as debug from 'debug';
 import {EventEmitter} from 'events';
-import {Generic} from '../fmxxxx/api/v1';
 import {Queue} from './queue';
 
 export interface RabbitmqQueueEvents {
 	on(event: 'error', listener: (err: Error) => void);
 }
 
-export class RabbitmqQueue extends EventEmitter implements RabbitmqQueueEvents, Queue<Generic> {
+export class RabbitmqQueue extends EventEmitter implements RabbitmqQueueEvents, Queue<api.v2.Message> {
 
 	protected readonly logger: debug.IDebugger;
 	protected channel: amqp.Channel;
@@ -23,7 +23,7 @@ export class RabbitmqQueue extends EventEmitter implements RabbitmqQueueEvents, 
 		this.queue = queue;
 	}
 
-	public async enqueue(message: Generic) {
+	public async enqueue(message: api.v2.Message) {
 
 		// prepare message
 		const payload = JSON.stringify(message);

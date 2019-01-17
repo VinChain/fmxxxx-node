@@ -41,12 +41,12 @@ export function createFromEnv(): DockerConfig {
 		};
 	}
 
-	if (process.env.MESSAGE_FILTER) {
-		const filter = process.env.MESSAGE_FILTER.split(',').map((i) => i.trim());
-		if (filter.length) {
-			config.filter = filter;
-		}
-	}
+	// if (process.env.MESSAGE_FILTER) {
+	// 	const filter = process.env.MESSAGE_FILTER.split(',').map((i) => i.trim());
+	// 	if (filter.length) {
+	// 		config.filter = filter;
+	// 	}
+	// }
 
 	return config;
 }

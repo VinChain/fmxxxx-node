@@ -1,7 +1,7 @@
+import * as api from '@vingps/message-schema';
 import * as fmxxxx from '@vingps/teltonika-fmxxxx';
 import * as debug from 'debug';
 import {EventEmitter} from 'events';
-import * as api from './api/v2';
 import {generate as generateCodec12} from './v2/codec12';
 import {generate as generateCodec8} from './v2/codec8';
 import {generate as generateInfo} from './v2/info';
@@ -9,12 +9,12 @@ import {generate as generateInfo} from './v2/info';
 export interface ServerEvents {
 	on(event: 'connection', listener: (device: fmxxxx.Device) => void);
 
-	on(event: 'data', listener: (message: api.Message, device: fmxxxx.Device) => void);
+	on(event: 'data', listener: (message: api.v2.Message, device: fmxxxx.Device) => void);
 }
 
 export class FmxxxxServer extends EventEmitter implements ServerEvents {
 
-	protected static generateId(device: fmxxxx.Device): api.id.FmxxxxId {
+	protected static generateId(device: fmxxxx.Device): api.v2.Id {
 		// generates id for fmxxxx device
 		return {
 			imei: device.imei,
@@ -22,7 +22,7 @@ export class FmxxxxServer extends EventEmitter implements ServerEvents {
 		};
 	}
 
-	protected static mapCodec8(device: fmxxxx.Device, record: fmxxxx.Record): api.Message {
+	protected static mapCodec8(device: fmxxxx.Device, record: fmxxxx.Record): api.v2.Message {
 		return {
 			apiVersion: 2,
 			id: FmxxxxServer.generateId(device),
@@ -30,7 +30,7 @@ export class FmxxxxServer extends EventEmitter implements ServerEvents {
 		};
 	}
 
-	protected static mapCodec12(device: fmxxxx.Device, command: string): api.Message {
+	protected static mapCodec12(device: fmxxxx.Device, command: string): api.v2.Message {
 		return {
 			apiVersion: 2,
 			id: FmxxxxServer.generateId(device),
@@ -38,7 +38,7 @@ export class FmxxxxServer extends EventEmitter implements ServerEvents {
 		};
 	}
 
-	protected static mapInfo(device: fmxxxx.Device, telemetry: fmxxxx.Telemetry, timestamp: Date): api.Message {
+	protected static mapInfo(device: fmxxxx.Device, telemetry: fmxxxx.Telemetry, timestamp: Date): api.v2.Message {
 		return {
 			apiVersion: 2,
 			id: FmxxxxServer.generateId(device),

@@ -1,9 +1,9 @@
+import * as api from '@vingps/message-schema';
 import * as aws from 'aws-sdk';
 import * as debug from 'debug';
-import {Generic} from '../fmxxxx/api/v1';
 import {Queue} from './queue';
 
-export class AWSQueue implements Queue<Generic> {
+export class AWSQueue implements Queue<api.v2.Message> {
 
 	protected readonly logger: debug.IDebugger;
 	protected readonly sqs: aws.SQS;
@@ -29,11 +29,15 @@ export class AWSQueue implements Queue<Generic> {
 		this.flush();
 	}
 
-	public async enqueue(message: Generic) {
+	public async enqueue(message: api.v2.Message) {
 
 		const msg: aws.SQS.SendMessageBatchRequestEntry = {
 			Id: 'msg_' + this.queueId++,
 			MessageAttributes: {
+				api: {
+					DataType: 'String',
+					StringValue: JSON.stringify(message.apiVersion),
+				},
 				id: {
 					DataType: 'String',
 					StringValue: JSON.stringify(message.id),
@@ -41,10 +45,6 @@ export class AWSQueue implements Queue<Generic> {
 				provider: {
 					DataType: 'String',
 					StringValue: message.id.provider,
-				},
-				type: {
-					DataType: 'String',
-					StringValue: message.type,
 				},
 			},
 			MessageBody: JSON.stringify(message),

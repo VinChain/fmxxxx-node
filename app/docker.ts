@@ -1,7 +1,7 @@
+import * as api from '@vingps/message-schema';
 import * as debug from 'debug';
 import * as util from 'util';
 import * as app from '../src';
-import {Generic} from '../src/fmxxxx/api/v1';
 import {AWSQueue} from '../src/queue/aws';
 import {MultiQueue} from '../src/queue/queue';
 import {RabbitmqQueue} from '../src/queue/rabbitmq';
@@ -58,7 +58,7 @@ setInterval(() => {
 
 
 // setup queues
-const populationQueue = new MultiQueue<Generic>();
+const populationQueue = new MultiQueue<api.v2.Message>();
 if (config.aws) {
 	const awsQueue = new AWSQueue(
 		config.aws.accessKeyId,
@@ -108,16 +108,8 @@ if (config.filter) {
 } else {
 	logger('No message filter configured');
 }
-fmxxxx.on('data', (msg: Generic) => {
-	if (config.filter && (config.filter.indexOf(msg.type) < 0)) {
-		// logger('Message %s filtered', msg.type);
-		return;
-	}
+
+fmxxxx.on('data', (msg: api.v2.Message) => {
 	populationQueue.enqueue(msg);
+	logger(msg);
 });
-//
-// fmxxxx.on('data', (msg: Generic) => {
-// 	if (msg.type === 'telemetry') {
-// 		logger(msg);
-// 	}
-// });

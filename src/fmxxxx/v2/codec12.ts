@@ -1,9 +1,9 @@
 /**
  * Generates VIN and DTC codes info API v2 event from codec12
  */
-import * as api from '../api/v2';
+import * as api from '@vingps/message-schema';
 
-export function generate(command: string): api.InfoEvent[] {
+export function generate(command: string): api.v2.InfoEvent[] {
 
 	const base = {
 		event: 'info',
@@ -15,8 +15,8 @@ export function generate(command: string): api.InfoEvent[] {
 	// try OBDinfo command
 	try {
 		const obdinfo = mapObdinfo(command);
-		const vinEvent: api.InfoEvent = {
-			...base as api.InfoEvent,
+		const vinEvent: api.v2.InfoEvent = {
+			...base as api.v2.InfoEvent,
 			name: 'vin',
 			value: obdinfo.VIN,
 		};
@@ -28,12 +28,14 @@ export function generate(command: string): api.InfoEvent[] {
 	// try Faultcodes command
 	try {
 		const codes = mapFaultcodes(command);
-		const faultcodesEvent: api.InfoEvent = {
-			...base as api.InfoEvent,
-			name: 'dtc codes',
-			value: codes,
-		};
-		return [ faultcodesEvent ];
+		if (codes.length) {
+			const faultcodesEvent: api.v2.InfoEvent = {
+				...base as api.v2.InfoEvent,
+				name: 'dtc codes',
+				value: codes,
+			};
+			return [ faultcodesEvent ];
+		}
 	} catch (e) {
 		// ignore
 	}
