@@ -57,9 +57,9 @@ export class FmxxxxServer extends EventEmitter implements ServerEvents {
 
 		this.fmxxxx.on('connection', (device) => this.emit('connection', device));
 
-		this.fmxxxx.on('record', (device, record) => this.mapCodec8(device, record));
-		this.fmxxxx.on('command', (device, command) => this.mapCodec12(device, command));
-		this.fmxxxx.on('info', (device, telemetry, timestamp) => this.mapInfo(device, telemetry, timestamp));
+		this.fmxxxx.on('record', (device, record) => FmxxxxServer.mapCodec8(device, record));
+		this.fmxxxx.on('command', (device, command) => FmxxxxServer.mapCodec12(device, command));
+		this.fmxxxx.on('info', (device, telemetry, timestamp) => FmxxxxServer.mapInfo(device, telemetry, timestamp));
 	}
 
 	public listen(...args: any[]) {
