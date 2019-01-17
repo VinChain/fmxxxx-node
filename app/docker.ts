@@ -111,5 +111,5 @@ if (config.filter) {
 
 fmxxxx.on('data', (msg: api.v2.Message) => {
 	populationQueue.enqueue(msg);
-	logger(msg);
+	// logger(msg);
 });
