@@ -58,13 +58,13 @@ export class FmxxxxServer extends EventEmitter implements ServerEvents {
 		this.fmxxxx.on('connection', (device) => this.emit('connection', device));
 
 		this.fmxxxx.on('record', (device, record) => {
-			this.emit('data', FmxxxxServer.mapCodec8(device, record), device);
+			this.publish(FmxxxxServer.mapCodec8(device, record), device);
 		});
 		this.fmxxxx.on('command', (device, command) => {
-			this.emit('data', FmxxxxServer.mapCodec12(device, command), device);
+			this.publish(FmxxxxServer.mapCodec12(device, command), device);
 		});
 		this.fmxxxx.on('info', (device, telemetry, timestamp) => {
-			this.emit('data',	FmxxxxServer.mapInfo(device, telemetry, timestamp), device);
+			this.publish(FmxxxxServer.mapInfo(device, telemetry, timestamp), device);
 		});
 	}
 
@@ -75,6 +75,12 @@ export class FmxxxxServer extends EventEmitter implements ServerEvents {
 
 	get connections() {
 		return this.fmxxxx.length;
+	}
+
+	protected publish(device, data: api.v2.Message) {
+		if (data.messages && data.messages.length) {
+			this.emit('data', data, device);
+		}
 	}
 
 }
