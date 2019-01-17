@@ -1,6 +1,6 @@
 {
-  "name": "@omedia/teltonika-node",
-  "version": "2.3.0",
+  "name": "@vingps/teltonika-node",
+  "version": "2.4.1",
   "private": true,
   "description": "Teltonika input node",
   "main": "dist/app/index.js",
@@ -14,19 +14,20 @@
   "author": "Alexander Sergeychik <alexander@sergeychik.com>",
   "license": "ISC",
   "devDependencies": {
+    "@vingps/message-schema": "^2.0.14",
     "@types/amqplib": "^0.5.9",
     "@types/debug": "0.0.30",
-    "@types/jest": "^23.3.7",
-    "@types/node": "^10.12.0",
+    "@types/jest": "^23.3.12",
+    "@types/node": "^10.12.18",
     "jest": "^23.6.0",
     "ts-jest": "^22.4.6",
-    "tslint": "^5.11.0",
+    "tslint": "^5.12.1",
     "typescript": "^2.9.2"
   },
   "dependencies": {
-    "@omedia/teltonika-fmxxxx": "^2.3.2",
-    "amqplib": "^0.5.2",
-    "aws-sdk": "^2.342.0",
+    "@vingps/teltonika-fmxxxx": "^2.4.18",
+    "amqplib": "^0.5.3",
+    "aws-sdk": "^2.388.0",
     "debug": "^3.2.6"
   },
   "jest": {

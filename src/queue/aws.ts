@@ -1,6 +1,6 @@
 import * as aws from 'aws-sdk';
 import * as debug from 'debug';
-import {Generic} from '../api/v1';
+import {Generic} from '../fmxxxx/api/v1';
 import {Queue} from './queue';
 
 export class AWSQueue implements Queue<Generic> {

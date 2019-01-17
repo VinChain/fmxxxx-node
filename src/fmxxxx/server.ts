@@ -1,17 +1,50 @@
-import * as fmxxxx from '@omedia/teltonika-fmxxxx';
+import * as fmxxxx from '@vingps/teltonika-fmxxxx';
 import * as debug from 'debug';
 import {EventEmitter} from 'events';
-import {Generic} from '../api/v1';
-import codec12 from './mapper/codec12';
-import codec8 from './mapper/codec8';
+import * as api from './api/v2';
+import {generate as generateCodec12} from './v2/codec12';
+import {generate as generateCodec8} from './v2/codec8';
+import {generate as generateInfo} from './v2/info';
 
 export interface ServerEvents {
 	on(event: 'connection', listener: (device: fmxxxx.Device) => void);
 
-	on(event: 'data', listener: (message: Generic, device: fmxxxx.Device) => void);
+	on(event: 'data', listener: (message: api.Message, device: fmxxxx.Device) => void);
 }
 
 export class FmxxxxServer extends EventEmitter implements ServerEvents {
+
+	protected static generateId(device: fmxxxx.Device): api.id.FmxxxxId {
+		// generates id for fmxxxx device
+		return {
+			imei: device.imei,
+			provider: 'fmxxxx',
+		};
+	}
+
+	protected static mapCodec8(device: fmxxxx.Device, record: fmxxxx.Record): api.Message {
+		return {
+			apiVersion: 2,
+			id: FmxxxxServer.generateId(device),
+			messages: generateCodec8(record),
+		};
+	}
+
+	protected static mapCodec12(device: fmxxxx.Device, command: string): api.Message {
+		return {
+			apiVersion: 2,
+			id: FmxxxxServer.generateId(device),
+			messages: generateCodec12(command),
+		};
+	}
+
+	protected static mapInfo(device: fmxxxx.Device, telemetry: fmxxxx.Telemetry, timestamp: Date): api.Message {
+		return {
+			apiVersion: 2,
+			id: FmxxxxServer.generateId(device),
+			messages: generateInfo(telemetry, timestamp),
+		};
+	}
 
 	private readonly fmxxxx: fmxxxx.Server;
 	private readonly logger: debug.IDebugger;
@@ -22,32 +55,16 @@ export class FmxxxxServer extends EventEmitter implements ServerEvents {
 		this.logger = debug('fmxxxx:mapper');
 		this.fmxxxx = fmxxxx.createServer('tcp', options);
 
-		// subscribe to data event
-		// this.fmxxxx.on('data', (device, codec, record) => this.map(device, codec, record));
 		this.fmxxxx.on('connection', (device) => this.emit('connection', device));
 
-		this.fmxxxx.on('record', (device, record) => this.map(device, 8, record));
-		this.fmxxxx.on('command', (device, record) => this.map(device, 12, record));
-
+		this.fmxxxx.on('record', (device, record) => this.mapCodec8(device, record));
+		this.fmxxxx.on('command', (device, command) => this.mapCodec12(device, command));
+		this.fmxxxx.on('info', (device, telemetry, timestamp) => this.mapInfo(device, telemetry, timestamp));
 	}
 
 	public listen(...args: any[]) {
 		// @ts-ignore
 		this.fmxxxx.listen(...args);
-	}
-
-	protected map(device: fmxxxx.Device, codecId: number, record) {
-		const records: Generic[] = [];
-		switch (codecId) {
-			case fmxxxx.CODEC8:
-				records.push(...codec8(device.imei, record));
-				break;
-			case fmxxxx.CODEC12:
-				records.push(...codec12(device.imei, record));
-				break;
-		}
-		this.logger('%d messages generated from device %s', records.length, device.imei);
-		records.forEach((r) => this.emit('data', r, device));
 	}
 
 	get connections() {

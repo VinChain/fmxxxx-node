@@ -4,7 +4,6 @@ export const VERSION = 1;
 
 export interface GenericId {
 	provider: string;
-
 	[name: string]: any;
 }
 

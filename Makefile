@@ -3,7 +3,7 @@ VERSION=$(shell node -p "require('./package.json').version")
 
 ## Compile module
 DOCKER_IMAGE=teltonika-node
-DOCKER_TAG=stable
+DOCKER_TAG=unstable
 
 DOCKER_DOCKERHUB_IMAGE=vingps/teltonika-node
 DOCKER_DOCKERHUB_TAG=$(DOCKER_TAG)
@@ -47,4 +47,4 @@ publish: image
 	aws ecr get-login --no-include-email | /bin/bash -C -
 	docker push $(DOCKER_AMAZON_IMAGE):$(DOCKER_AMAZON_TAG)
 	docker push $(DOCKER_AMAZON_IMAGE):$(VERSION)
-
+	docker push $(DOCKER_DOCKERHUB_IMAGE):$(DOCKER_DOCKERHUB_TAG)

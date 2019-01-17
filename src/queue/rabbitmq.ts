@@ -1,7 +1,7 @@
 import * as amqp from 'amqplib';
 import * as debug from 'debug';
 import {EventEmitter} from 'events';
-import {Generic} from '../api/v1';
+import {Generic} from '../fmxxxx/api/v1';
 import {Queue} from './queue';
 
 export interface RabbitmqQueueEvents {

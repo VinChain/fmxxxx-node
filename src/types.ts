@@ -15,7 +15,7 @@ export interface LocationInfo {
 	altitude: number;
 	speed: number;
 	course: number;
-	satellites: number;
+	satellites?: number;
 }
 
 export interface IoData {

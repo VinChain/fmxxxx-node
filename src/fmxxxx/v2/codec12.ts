@@ -1,28 +1,26 @@
-import * as debug from 'debug';
-import * as v1 from '../api/v1';
-import {CodecMapper} from '../mapper';
+/**
+ * Generates VIN and DTC codes info API v2 event from codec12
+ */
+import * as api from '../api/v2';
 
-const logger = debug('fmxxxx:mapper:codec12');
+export function generate(command: string): api.InfoEvent[] {
 
-export type OutputType = v1.Vin | v1.FaultCodes;
+	const base = {
+		event: 'info',
+		source: 'internal',
+		timestamp: Date.now(),
+	};
 
-export const map: CodecMapper<string, OutputType> = (imei, command: string): OutputType[] => {
-
-	logger('Got %o', command);
-	const result: OutputType[] = [];
-
+	// tslint:disable:object-literal-sort-keys
 	// try OBDinfo command
 	try {
 		const obdinfo = mapObdinfo(command);
-		const vinData: v1.Vin = {
-			apiVersion: 1,
-			data: obdinfo.VIN,
-			id: {imei, provider: 'fmxxxx'},
-			timestamp: Date.now(),
-			type: 'vin',
+		const vinEvent: api.InfoEvent = {
+			...base as api.InfoEvent,
+			name: 'vin',
+			value: obdinfo.VIN,
 		};
-		result.push(vinData);
-		return result;
+		return [ vinEvent ];
 	} catch (e) {
 		// ignore
 	}
@@ -30,25 +28,17 @@ export const map: CodecMapper<string, OutputType> = (imei, command: string): Out
 	// try Faultcodes command
 	try {
 		const codes = mapFaultcodes(command);
-		const faultcodesData: v1.FaultCodes = {
-			apiVersion: 1,
-			data: codes,
-			id: {imei, provider: 'fmxxxx'},
-			timestamp: Date.now(),
-			type: 'faultcodes',
+		const faultcodesEvent: api.InfoEvent = {
+			...base as api.InfoEvent,
+			name: 'dtc codes',
+			value: codes,
 		};
-		result.push(faultcodesData);
-		return result;
+		return [ faultcodesEvent ];
 	} catch (e) {
 		// ignore
 	}
-
-	logger('No commands parsed from %s', command);
-	return result;
-};
-
-export default map;
-
+	// tslint:enable:object-literal-sort-keys
+}
 
 /**
  * Protocol,

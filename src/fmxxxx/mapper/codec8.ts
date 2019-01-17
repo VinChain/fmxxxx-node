@@ -1,6 +1,6 @@
-import {Record} from '@omedia/teltonika-fmxxxx';
+import {Record} from '@vingps/teltonika-fmxxxx';
 import * as debug from 'debug';
-import * as v1 from '../../api/v1';
+import * as v1 from '../api/v1';
 import {CodecMapper} from '../mapper';
 
 export type OutputType = v1.Location | v1.Telemetry;
