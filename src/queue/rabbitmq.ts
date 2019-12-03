@@ -27,7 +27,7 @@ export class RabbitmqQueue extends EventEmitter implements RabbitmqQueueEvents, 
 
 		// prepare message
 		const payload = JSON.stringify(message);
-		const buffer = Buffer.from(payload, 'UTF-8');
+		const buffer = Buffer.from(payload, 'utf8');
 
 		// prepare channel
 		const channel = this.channel ? this.channel : await this.connect();
